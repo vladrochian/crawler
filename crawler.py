@@ -32,7 +32,10 @@ def get_scores(ranking, division):
     division_points = points[division - 1]
     scores = []
     for i in range(len(ranking)):
-        score = division_points[0]
+        if i < len(division_points):
+            score = division_points[i]
+        else:
+            score = 1
         if i > 0 and ranking[i][1] == ranking[i - 1][1]:
             score = scores[i - 1][1]
         scores.append((ranking[i][0], score))

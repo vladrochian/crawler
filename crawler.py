@@ -4,7 +4,7 @@ import infoarena
 
 
 def get_ranking(url):
-    if url.find('topcoder.com') != 1:
+    if url.find('topcoder.com') != -1:
         return topcoder.get_ranking(url)
     if url.find('codeforces.com') != -1:
         return codeforces.get_ranking(url)
@@ -57,3 +57,7 @@ def print_contest_scores(url, users_file, division):
     scores = get_contest_scores(url, users_file, division)
     for contestant in scores:
         print(contestant[0], contestant[1], sep=' ', end='\n')
+
+
+# Testing Codeforces
+get_ranking("http://codeforces.com/api/contest.standings?contestId=790&from=1&count=10000&showUnofficial=false")

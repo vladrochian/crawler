@@ -1,9 +1,10 @@
+from typing import List, Tuple
 from base import *
 from bs4 import BeautifulSoup
-from bs4 import NavigableString
+from bs4.element import Tag
 
 
-def get_handle(item: BeautifulSoup) -> str:
+def get_handle(item: Tag) -> str:
     children = item('div')
     for child in children:
         spans = child('span')
@@ -12,7 +13,7 @@ def get_handle(item: BeautifulSoup) -> str:
                 return str((span.find('a').contents[0]))
 
 
-def get_score(item):
+def get_score(item: Tag) -> str:
     score = 0
     children = item('td', class_='number score')
     for child in children:
@@ -20,7 +21,7 @@ def get_score(item):
     return score
 
 
-def get_ranking(url):
+def get_ranking(url: str) -> List[Tuple[str, int]]:
     url = url.rstrip()
     url += '?rankings_display_entries=500'
 

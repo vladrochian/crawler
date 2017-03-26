@@ -20,5 +20,9 @@ def get_ranking(url):
     str_response = response.read().decode('utf-8')
     data = json.loads(str_response)
 
+    lst = []
     for item in data['result']['rows']:
-        print(get_handle(item), get_rank(item), get_score(item))
+        lst.append([get_handle(item), get_score(item)])
+
+    lst.sort(key=lambda x: x[1], reverse=True)
+    return lst

@@ -13,6 +13,15 @@ def get_ranking(url):
     return []
 
 
+def get_file_name(url):
+    if url.find('topcoder.com') != -1:
+        return 'topcoder';
+    if url.find('codeforces.com') != -1:
+        return 'codeforces'
+    if url.find('infoarena.ro') != -1:
+        return 'infoarena'
+
+
 def filter_ranking(ranking, users):
     filtered = []
     for contestant in ranking:
@@ -43,21 +52,31 @@ def get_scores(ranking, division):
 
 
 def read_users(file):
-    file_input = open(file, 'r')
-    return file_input.readlines()
+    return file.read().splitlines()
 
 
-def get_contest_scores(url, users_file, division):
-    users = read_users(users_file)
+def get_contest_scores(url, division):
+    with open(get_file_name(url), 'r') as infile:
+        users = read_users(infile)
+
     ranking = filter_ranking(get_ranking(url), users)
     return get_scores(ranking, division)
 
 
-def print_contest_scores(url, users_file, division):
-    scores = get_contest_scores(url, users_file, division)
+def print_contest_scores(url, division):
+    scores = get_contest_scores(url, division)
     for contestant in scores:
         print(contestant[0], contestant[1], sep=' ', end='\n')
 
 
-# Testing Codeforces
-get_ranking("http://codeforces.com/api/contest.standings?contestId=790&from=1&count=10000&showUnofficial=false")
+def valid_url(url):
+    return (url.find('topcoder.com') != -1 or \
+        url.find('codeforces.com') != -1 or \
+        url.find('infoarena.ro') != -1)
+
+url = input("Copy&paste the url: ")
+while valid_url(url):
+    division = int(input("What division?"))
+    print_contest_scores(url, division)
+    url = input("Copy&paste the url: ")
+

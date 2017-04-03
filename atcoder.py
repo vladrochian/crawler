@@ -1,10 +1,11 @@
-#atatomir
 import requests
+
 
 class user:
     def __init__(self, name, rank):
         self.name = name
         self.rank = rank
+
 
 def get_user(data, pos):
     act = user("", 0)
@@ -31,6 +32,7 @@ def get_user(data, pos):
 
     return pos, act
 
+
 def get_ranking(site):
     page = requests.get(site)
     data = page.text
@@ -46,7 +48,7 @@ def get_ranking(site):
 
     return ord
 
-site = raw_input('Give me the site :')
+site = input('Give me the site :')
 data = get_ranking(site)
 
 order = []

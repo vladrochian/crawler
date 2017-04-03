@@ -32,8 +32,7 @@ def get_user(data, pos):
 
     return pos, act
 
-
-def get_ranking(site):
+def get_map(site):
     page = requests.get(site)
     data = page.text
     ord = {}
@@ -48,18 +47,30 @@ def get_ranking(site):
 
     return ord
 
-site = input('Give me the site :')
-data = get_ranking(site)
 
-order = []
+def get_ranking(site):
+    ord = []
+    data = get_map(site)
+    for e in data:
+        ord.append((e, data[e]))
+    ord.sort(key = lambda x:x[1])
+    return ord
 
-fin = open("atcoder", "r")
-for contestant in fin.read().split("\n"):
-    try:
-        order.append((data[contestant], contestant))
-    except:
-        pass
+if __name__ == "__main__":
+    site = input('Give me the site :')
+    data = get_map(site)
 
-order.sort()
-for contestant in order:
-    print(str(contestant[0]) + " - " + contestant[1])
+    print(get_ranking(site))
+
+    order = []
+
+    fin = open("atcoder", "r")
+    for contestant in fin.read().split("\n"):
+        try:
+            order.append((data[contestant], contestant))
+        except:
+            pass
+
+    order.sort()
+    for contestant in order:
+        print(str(contestant[0]) + " - " + contestant[1])

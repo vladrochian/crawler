@@ -3,6 +3,7 @@ import topcoder
 import codeforces
 import infoarena
 
+# TODO: Remove comment noob
 
 def get_ranking(url: str) -> List[Tuple[str, int]]:
     if url.find('topcoder.com') != -1:

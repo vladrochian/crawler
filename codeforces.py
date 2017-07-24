@@ -12,6 +12,10 @@ def get_score(item: dict) -> str:
     return item['points']
 
 
+def get_participant_type(item: dict) -> str:
+    return item['party']['participantType']
+
+
 def get_ranking(url: str) -> List[Tuple[str, int]]:
     response = urllib.request.urlopen(url)
     str_response = response.read().decode('utf-8')
@@ -19,7 +23,9 @@ def get_ranking(url: str) -> List[Tuple[str, int]]:
 
     lst = []
     for item in data['result']['rows']:
-        lst.append((get_handle(item), get_score(item)))
+        if get_score(item) != 0 and (get_participant_type(item) == 'CONTESTANT' or
+                                     get_participant_type(item) == 'OUT_OF_COMPETITION'):
+            lst.append((get_handle(item), get_score(item)))
 
     lst.sort(key=lambda x: x[1], reverse=True)
     return lst

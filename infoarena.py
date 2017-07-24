@@ -28,6 +28,7 @@ def get_ranking(url: str) -> List[Tuple[str, int]]:
     html = get_html(url)
 
     soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup()
 
     tr = soup.find_all('tr', class_='odd')
     tr += soup.find_all('tr', class_='even')

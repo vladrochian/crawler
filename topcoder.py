@@ -1,13 +1,12 @@
 from typing import List, Tuple
+
 from bs4 import BeautifulSoup
-from bs4.element import Tag
+import urllib.request
 
 
 def get_ranking(url: str) -> List[Tuple[str, int]]:
-    html = get_html(url)
 
-    soup = BeautifulSoup(html, 'lxml')
+    html: str = urllib.request.urlopen(url).read()
 
-    table = soup.find_all('table', class_='mainContent')
-    print(table)
+
     return []

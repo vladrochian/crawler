@@ -1,3 +1,4 @@
+import urllib.request
 from typing import List, Tuple
 import json
 
@@ -22,9 +23,18 @@ def get_ranking(url: str) -> List[Tuple[str, int]]:
 
     lst = []
     for item in data['result']['rows']:
-        if get_score(item) != 0 and (get_participant_type(item) == 'CONTESTANT' or
-                                     get_participant_type(item) == 'OUT_OF_COMPETITION'):
+        if get_score(item) != 0 and (
+                        get_participant_type(item) == 'CONTESTANT' or
+                        get_participant_type(item) == 'OUT_OF_COMPETITION'):
             lst.append((get_handle(item), get_score(item)))
 
     lst.sort(key=lambda x: x[1], reverse=True)
     return lst
+
+
+def matches(url: str) -> bool:
+    return url.find("codeforces.com") != -1
+
+
+def get_file_name() -> str:
+    return "codeforces"

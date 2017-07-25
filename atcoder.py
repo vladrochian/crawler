@@ -1,74 +1,30 @@
-import requests
+import json
+from typing import Tuple, List
+
+import urllib.request
+import regex as re
 
 
-class user:
-    def __init__(self, name, rank):
-        self.name = name
-        self.rank = rank
+def get_ranking(url_name: str) -> List[Tuple[str, int]]:
+    if list(url_name)[-1] != '/':
+        url_name += "/"
+    url_name += "standings/"
+
+    print(url_name)
+    html = urllib.request.urlopen(url_name).read()
+    json_string = "[" + (re.search('ATCODER\.standings = {.*data: \[(.*)\].*};',
+                                   str(html), re.IGNORECASE).group(1)) + "]"
+    json_obj = json.loads(json_string)
+
+    ret = []
+    for participant in json_obj:
+        ret.append((participant['user_screen_name'], participant['rank']))
+    return ret
 
 
-def get_user(data, pos):
-    act = user("", 0)
-    # get the rank
-    pos = data.find("rank", pos)
-    if pos == -1:
-         return -1, act
-
-    while data[pos].isdigit() == False:
-        pos += 1
-    aux = ""
-    while data[pos].isdigit() == True:
-        aux += data[pos]
-        pos += 1
-    act.rank = int(aux)
-
-    # get the name
-    pos = data.find("user_screen_name", pos)
-    pos += 19
-
-    while data[pos] != '''"''':
-        act.name += data[pos]
-        pos += 1
-
-    return pos, act
-
-def get_map(site):
-    page = requests.get(site)
-    data = page.text
-    ord = {}
-
-    pos = 0
-    while 1:
-        act = user("", 0)
-        pos, act = get_user(data, pos)
-        if pos == -1:
-            break
-        ord[act.name] = act.rank
-
-    return ord
+def matches(url: str) -> bool:
+    return url.find("atcoder.jp") != -1
 
 
-def get_ranking(site):
-    ord = []
-    data = get_map(site)
-    for e in data:
-        ord.append((e, data[e]))
-    ord.sort(key = lambda x:x[1])
-    return ord
-
-if __name__ == "__main__":
-    site = input('Give me the site :')
-    data = get_map(site)
-
-    order = []
-
-    fin = open("atcoder", "r")
-    for contestant in fin.read().split("\n"):
-        try:
-            order.append((data[contestant], contestant))
-        except:
-            pass
-
-    order.sort()
-    for contestant in order:
-        print(str(contestant[0]) + " - " + contestant[1])
+def get_file_name() -> str:
+    return "atcoder"

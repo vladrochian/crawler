@@ -1,3 +1,4 @@
+import urllib.request
 from typing import List, Tuple
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -24,10 +25,9 @@ def get_ranking(url: str) -> List[Tuple[str, int]]:
     url = url.rstrip()
     url += '?rankings_display_entries=500'
 
-    html = get_html(url)
+    html: str = urllib.request.urlopen(url).read()
 
     soup = BeautifulSoup(html, 'lxml')
-    soup = BeautifulSoup()
 
     tr = soup.find_all('tr', class_='odd')
     tr += soup.find_all('tr', class_='even')
@@ -37,3 +37,12 @@ def get_ranking(url: str) -> List[Tuple[str, int]]:
         lst.append([get_handle(item), get_score(item)])
     lst.sort(key=lambda x: x[1], reverse=True)
     return lst
+
+
+def matches(url: str) -> bool:
+    return url.find("infoarena.ro") != -1
+
+
+def get_file_name() -> str:
+    return "infoarena"
+

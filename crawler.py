@@ -1,34 +1,33 @@
-from typing import List, Tuple, TextIO
-import topcoder
+from io import TextIOWrapper
+from typing import List, Tuple
+
+import atcoder
 import codeforces
 import infoarena
 
-# TODO: Remove comment noob
+ALL_PLATFORMS = [atcoder, codeforces, infoarena]
 
-def get_ranking(url: str) -> List[Tuple[str, int]]:
-    if url.find('topcoder.com') != -1:
-        return topcoder.get_ranking(url)
-    if url.find('codeforces.com') != -1:
-        return codeforces.get_ranking(url)
-    if url.find('infoarena.ro') != -1:
-        return infoarena.get_ranking(url)
+
+def get_ranking(url_name: str) -> List[Tuple[str, int]]:
+    for platform in ALL_PLATFORMS:
+        if platform.matches(url_name):
+            return platform.get_ranking(url_name)
     return []
 
 
-def get_file_name(url:str) -> str:
-    if url.find('topcoder.com') != -1:
-        return 'topcoder';
-    if url.find('codeforces.com') != -1:
-        return 'codeforces'
-    if url.find('infoarena.ro') != -1:
-        return 'infoarena'
+def get_file_name(url_name: str) -> str:
+    for platform in ALL_PLATFORMS:
+        if platform.matches(url_name):
+            return platform.get_file_name()
 
 
 def filter_ranking(ranking: List[Tuple[str, int]], users: List[str]) -> List[Tuple[str, int]]:
+    lowercase_names = list(map(lambda name: str.lower(name), users))
+
     filtered = []
-    for contestant in ranking:
-        if contestant[0] in users:
-            filtered.append(contestant)
+    for (name, rank) in ranking:
+        if str.lower(name) in lowercase_names:
+            filtered.append((name, rank))
     return filtered
 
 
@@ -39,8 +38,8 @@ points = [
 ]
 
 
-def get_scores(ranking: List[Tuple[str, int]], division: int) -> List[Tuple[str, int]]:
-    division_points = points[division - 1]
+def get_scores(ranking: List[Tuple[str, int]], division_no: int) -> List[Tuple[str, int]]:
+    division_points = points[division_no - 1]
     scores = []
     for i in range(len(ranking)):
         if i < len(division_points):
@@ -53,32 +52,37 @@ def get_scores(ranking: List[Tuple[str, int]], division: int) -> List[Tuple[str,
     return scores
 
 
-def read_users(file: TextIO) -> str:
+def read_users(file: TextIOWrapper) -> List[str]:
     return file.read().splitlines()
 
 
-def get_contest_scores(url: str, division: int) -> List[Tuple[str, int]]:
-    with open(get_file_name(url), 'r') as infile:
+def get_contest_scores(url_name: str, division_no: int) -> List[Tuple[str, int]]:
+    with open(get_file_name(url_name), 'r') as infile:
         users = read_users(infile)
 
-    ranking = filter_ranking(get_ranking(url), users)
-    return get_scores(ranking, division)
+    ranking = filter_ranking(get_ranking(url_name), users)
+    return get_scores(ranking, division_no)
 
 
-def print_contest_scores(url: str, division: int):
-    scores = get_contest_scores(url, division)
+def print_contest_scores(url_name: str, division_no: int):
+    scores = get_contest_scores(url_name, division_no)
     for contestant in scores:
         print(contestant[0], contestant[1], sep=' ', end='\n')
 
 
-def valid_url(url: int) -> bool:
-    return (url.find('topcoder.com') != -1 or \
-        url.find('codeforces.com') != -1 or \
-        url.find('infoarena.ro') != -1)
+def valid_url(url_name: str) -> bool:
+    for platform in ALL_PLATFORMS:
+        if platform.matches(url_name):
+            return True
+    return False
 
-url = input("Copy&paste the url: ")
-while valid_url(url):
-    division = int(input("What division?"))
-    print_contest_scores(url, division)
-    url = input("Copy&paste the url: ")
 
+def __main__():
+    url = input("Copy&paste the url: ").strip()
+    while valid_url(url):
+        division = int(input("What division?"))
+        print_contest_scores(url, division)
+        url = input("Copy&paste the url: ")
+
+
+__main__()
